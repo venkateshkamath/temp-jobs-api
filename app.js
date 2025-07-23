@@ -1,7 +1,7 @@
 require("dotenv").config();
 require("express-async-errors");
 const cors = require("cors");
-const rateLimiter = require("rate-limiter");
+const rateLimiter = require("express-rate-limit");
 const xss = require("xss-clean");
 const helmet = require("helmet");
 const express = require("express");
@@ -18,7 +18,7 @@ const notFoundMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 
 //trust proxy
-app.set('trust proxy',1)
+app.set("trust proxy", 1);
 
 // Security First
 app.use(cors());
@@ -27,10 +27,12 @@ app.use(helmet());
 // Request Processing
 app.use(express.json());
 app.use(xss());
-app.use(rateLimiter({
-  windowMs: 15 * 60 * 1000,
-  limit: 100,
-}));
+app.use(
+  rateLimiter({
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
+  })
+);
 // routes
 app.use("/api/v1/auth", authRouter);
 //middleware
